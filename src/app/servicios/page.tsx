@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 export default function ServiciosPage() {
   const [isVisible, setIsVisible] = useState(false)
@@ -73,26 +74,18 @@ export default function ServiciosPage() {
 
           {/* Grid de servicios */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Servicio 1 */}
-            <div className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#5e1415] text-white mb-4 mx-auto">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
+            {/* Servicio 1 - LibeRed */}
+            <a href="/libered" className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer block">
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#5e1415] mb-4 mx-auto text-3xl">
+                💳
               </div>
-              <h3 
-                className="text-xl font-bold text-center mb-3"
-                style={{ fontFamily: 'Lora, Georgia, serif', color: '#5e1415' }}
-              >
-                Biblioteca
-              </h3>
               <p 
                 className="text-center"
                 style={{ fontFamily: 'Lora, Georgia, serif', color: '#625352', lineHeight: '1.6' }}
               >
-                Acceso a nuestra biblioteca con material histórico y académico.
+                Tarjeta de beneficios con descuentos en más de 50 comercios.
               </p>
-            </div>
+            </a>
 
             {/* Servicio 2 */}
             <div className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
@@ -115,26 +108,24 @@ export default function ServiciosPage() {
               </p>
             </div>
 
-            {/* Servicio 3 */}
-            <div className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            {/* Servicio 3 - Tienda del Duende */}
+            <a href="/tienda" className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer block">
               <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#5e1415] text-white mb-4 mx-auto">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <span className="text-3xl">🧙</span>
               </div>
               <h3 
                 className="text-xl font-bold text-center mb-3"
                 style={{ fontFamily: 'Lora, Georgia, serif', color: '#5e1415' }}
               >
-                Asesoramiento
+                Tienda del Duende
               </h3>
               <p 
                 className="text-center"
                 style={{ fontFamily: 'Lora, Georgia, serif', color: '#625352', lineHeight: '1.6' }}
               >
-                Orientación y apoyo para trámites y consultas.
+                Vinos exclusivos y productos de la Asociación.
               </p>
-            </div>
+            </a>
 
             {/* Servicio 4 */}
             <div className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
@@ -178,24 +169,24 @@ export default function ServiciosPage() {
               </p>
             </div>
 
-            {/* Servicio 6 */}
+            {/* Servicio 6 - Biblioteca */}
             <div className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
               <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#5e1415] text-white mb-4 mx-auto">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
               <h3 
                 className="text-xl font-bold text-center mb-3"
                 style={{ fontFamily: 'Lora, Georgia, serif', color: '#5e1415' }}
               >
-                Beneficios
+                Biblioteca
               </h3>
               <p 
                 className="text-center"
                 style={{ fontFamily: 'Lora, Georgia, serif', color: '#625352', lineHeight: '1.6' }}
               >
-                Descuentos y promociones exclusivas para asociados.
+                Acceso a material histórico y académico del Monserrat.
               </p>
             </div>
           </div>

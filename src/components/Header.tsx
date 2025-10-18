@@ -9,21 +9,20 @@ export default function Header() {
 
   const menuItems = [
     { href: '/', label: 'Inicio' },
-    { href: '/comision-directiva', label: 'Comisión Directiva' },
+    { href: '/servicios', label: 'Servicios' },
     { href: '/contacto', label: 'Contacto' },
     { href: '/mision-vision-valores', label: 'Misión, visión, valores' },
     { href: '/monserratenses-por-el-mundo', label: 'Monserratenses por el mundo' },
     { href: '/noticias', label: 'Noticias' },
-    { href: '/servicios', label: 'Servicios' },
-    { href: '/tienda', label: '🧙 Tienda del Duende' },
+    { href: '/comision-directiva', label: 'Comisión Directiva' },
   ]
 
   return (
-    <header className="et-l et-l--header bg-white shadow-md relative z-50">
-      <div className="flex items-center justify-between px-4" style={{ width: '90%', maxWidth: '1920px', margin: '0 auto', minHeight: '120px', padding: '15px 0' }}>
-            {/* Logo - 1/4 width */}
-            <div className="et_pb_column et_pb_column_1_4" style={{ width: '20.875%', marginRight: '5.5%' }}>
-              <div className="et_pb_module et_pb_image">
+    <header className="et-l et-l--header bg-white shadow-md sticky top-0 z-50">
+      <div className="flex items-center justify-between px-4" style={{ width: '90%', maxWidth: '1920px', margin: '0 auto', minHeight: '90px', padding: '10px 0' }}>
+            {/* Logo Asociación */}
+            <div className="et_pb_column flex items-start justify-start" style={{ width: '30%', marginRight: '2%' }}>
+              <div className="et_pb_module et_pb_image flex-shrink-0">
                 <Link href="/">
                   <span className="et_pb_image_wrap block">
                     <Image 
@@ -31,8 +30,8 @@ export default function Header() {
                       alt="Asociación Civil Duarte y Quirós"
                       width={355}
                       height={164}
-                      className="w-full h-auto"
-                      style={{ maxWidth: '70%', maxHeight: '150px' }}
+                      className="h-auto"
+                      style={{ height: '70px', width: 'auto' }}
                       priority
                     />
                   </span>
@@ -40,10 +39,24 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Desktop Menu - 3/4 width */}
-            <div className="et_pb_column et_pb_column_3_4 hidden lg:block" style={{ width: '74.25%' }}>
+            {/* Logo LibeRed en el medio */}
+            <div className="hidden lg:flex items-center justify-start" style={{ width: '18%', paddingLeft: '0', marginLeft: '-300px', marginTop: '6px' }}>
+              <Link href="/libered#tarjeta" className="group">
+                <Image
+                  src="/images/redliber.svg"
+                  alt="LibeRed"
+                  width={250}
+                  height={88}
+                  className="w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  style={{ maxHeight: '80px' }}
+                />
+              </Link>
+            </div>
+
+            {/* Desktop Menu */}
+            <div className="et_pb_column hidden lg:block" style={{ width: '53%' }}>
               <nav className="et_pb_menu text-right">
-                <ul className="et-menu nav inline-flex justify-end items-center gap-x-6" style={{ maxWidth: '100%', flexWrap: 'wrap', maxHeight: '60px', overflow: 'hidden' }}>
+                <ul className="et-menu nav inline-flex justify-end items-center gap-x-6" style={{ maxWidth: '100%', flexWrap: 'wrap' }}>
                   {menuItems.map((item) => (
                     <li key={item.href} className="inline-block">
                       <Link 
@@ -72,10 +85,58 @@ export default function Header() {
               aria-label="Toggle menu"
             >
               <svg className="w-6 h-6" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M4 6h16M4 12h16M4 18h16"></path>
+                {mobileMenuOpen ? (
+                  <path d="M6 18L18 6M6 6l12 12"></path>
+                ) : (
+                  <path d="M4 6h16M4 12h16M4 18h16"></path>
+                )}
               </svg>
             </button>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg">
+          <nav className="container mx-auto px-4 py-4">
+            <ul className="space-y-2">
+              {menuItems.map((item) => (
+                <li key={item.href}>
+                  <Link 
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-3 px-4 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    style={{ 
+                      fontFamily: 'Barlow, Helvetica, Arial, sans-serif',
+                      fontSize: '16px',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+              {/* LibeRed en menú móvil */}
+              <li className="border-t border-gray-200 pt-2 mt-2">
+                <Link 
+                  href="/libered#tarjeta"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 py-3 px-4 text-[#8B1538] hover:bg-red-50 rounded-lg transition-colors font-semibold"
+                >
+                  <Image
+                    src="/images/redliber.svg"
+                    alt="LibeRed"
+                    width={80}
+                    height={30}
+                    className="w-auto h-auto object-contain"
+                    style={{ maxHeight: '25px' }}
+                  />
+                  <span>Tarjeta de Beneficios</span>
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      )}
     </header>
   )
 }

@@ -17,8 +17,8 @@ export default function AboutSection() {
         className="relative py-20 md:py-15"
         style={{
           backgroundImage: 'linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0) 100%), url(/images/fachada-monserrat.jpg)',
-          backgroundSize: 'center %',
-          backgroundPosition: '40% center',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
         }}
       >
         {/* Divider decorativo ondulado */}

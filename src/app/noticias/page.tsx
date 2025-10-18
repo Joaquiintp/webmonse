@@ -1,6 +1,4 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import { getNoticias } from '@/lib/strapi-news'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -23,43 +21,8 @@ interface Noticia {
   publishedAt: string
 }
 
-export default function NoticiasPage() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [news, setNews] = useState<Noticia[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Trigger animation when component mounts
-    setTimeout(() => setIsVisible(true), 100)
-    
-    // Fetch news from Strapi
-    const fetchNews = async () => {
-      try {
-        const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL
-        const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-        
-        const response = await fetch(
-          `${STRAPI_URL}/api/noticias?populate=*&sort=publishedAt:desc`,
-          {
-            headers: {
-              'Authorization': `Bearer ${STRAPI_TOKEN}`
-            }
-          }
-        )
-        
-        const data = await response.json()
-        
-        // Now it's a Collection Type, so data.data is already an array
-        setNews(data.data || [])
-      } catch (error) {
-        console.error('Error fetching news:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    
-    fetchNews()
-  }, [])
+export default async function NoticiasPage() {
+  const news = await getNoticias() // Obtener todas las noticias
 
   return (
     <>
@@ -68,22 +31,18 @@ export default function NoticiasPage() {
         className="relative min-h-[45vh] flex items-center justify-center overflow-hidden"
         style={{
           backgroundImage: 'url(/images/fuente-patio-menor-monserrat.jpg)',
-          backgroundSize: '100%',
+          backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center 30%',
+          backgroundPosition: 'center center',
         }}
       >
         {/* Dark overlay for dramatic effect */}
         <div className="absolute inset-0 bg-black bg-opacity-25"></div>
         
-        {/* Title with animation */}
-        <div 
-          className={`relative z-10 text-center transition-all duration-1000 ease-out ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}
-        >
+        {/* Title */}
+        <div className="relative z-10 text-center">
           <h1 
-            className="text-6xl md:text-7xl font-bold text-white"
+            className="text-5xl md:text-7xl font-bold text-white"
             style={{ 
               fontFamily: 'Lora, Georgia, serif',
               textShadow: '3px 3px 10px rgba(0,0,0,0.8)'
@@ -94,14 +53,14 @@ export default function NoticiasPage() {
         </div>
       </section>
 
-      {/* Content Section - You can add news grid here */}
-      <section className="py-20 md:py-32 bg-white">
+      {/* Content Section */}
+      <section className="py-12 md:py-20 bg-white">
         <div className="container mx-auto px-4 max-w-6xl">
-          {loading ? (
-            <p className="text-center text-gray-600">Cargando noticias...</p>
+          {!news || news.length === 0 ? (
+            <p className="text-center text-gray-600">No hay noticias disponibles</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {news.map((item) => {
+              {news.map((item: Noticia) => {
                 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL
                 
                 // Determinar qué imagen mostrar: primera de fotos o foto principal

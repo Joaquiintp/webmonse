@@ -1,6 +1,6 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import { getNoticias } from '@/lib/strapi-news'
+import Link from 'next/link'
+import Image from 'next/image'
 
 interface Noticia {
   id: number
@@ -20,48 +20,8 @@ interface Noticia {
   publishedAt: string
 }
 
-export default function NewsSection() {
-  const [news, setNews] = useState<Noticia[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL
-        const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-        
-        if (!STRAPI_URL || !STRAPI_TOKEN) {
-          throw new Error('Strapi URL o Token no configurados')
-        }
-        
-        const response = await fetch(
-          `${STRAPI_URL}/api/noticias?populate=*&sort=publishedAt:desc&pagination[limit]=6`,
-          {
-            headers: {
-              Authorization: `Bearer ${STRAPI_TOKEN}`,
-            },
-          }
-        )
-        
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`)
-        }
-        
-        const data = await response.json()
-        console.log('Noticias recibidas:', data)
-        // Now it's a Collection Type, so data.data is already an array
-        setNews(data.data || [])
-      } catch (error) {
-        console.error('Error fetching news:', error)
-        setError(error instanceof Error ? error.message : 'Error desconocido')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchNews()
-  }, [])
+export default async function NewsSection() {
+  const news = await getNoticias(6)
 
   // Función para obtener el excerpt del contenido
   const getExcerpt = (content: string, maxLength: number = 150) => {
@@ -69,7 +29,7 @@ export default function NewsSection() {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
   }
 
-  if (loading) {
+  if (!news || news.length === 0) {
     return (
       <section id="noticias" className="py-20 md:py-32 bg-white relative">
         <div className="container mx-auto px-4">
@@ -78,22 +38,7 @@ export default function NewsSection() {
               Noticias y novedades
             </h2>
           </div>
-          <div className="text-center text-gray-600">Cargando noticias...</div>
-        </div>
-      </section>
-    )
-  }
-
-  if (error) {
-    return (
-      <section id="noticias" className="py-20 md:py-32 bg-white relative">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#5e1415]" style={{ fontFamily: 'Lora, Georgia, serif' }}>
-              Noticias y novedades
-            </h2>
-          </div>
-          <div className="text-center text-red-600">Error al cargar noticias: {error}</div>
+          <div className="text-center text-gray-600">No hay noticias disponibles</div>
         </div>
       </section>
     )
@@ -109,7 +54,7 @@ export default function NewsSection() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {news.map((item) => {
+          {news.map((item: Noticia) => {
             // Determinar qué imagen mostrar: primera de fotos o foto principal
             const getPreviewImage = () => {
               if (item.fotos && item.fotos.length > 0) {
@@ -123,13 +68,14 @@ export default function NewsSection() {
             
             return (
               <article key={item.id} className="group">
-                <a href={`/noticias/${item.Slug || item.documentId}`} className="block">
+                <Link href={`/noticias/${item.Slug || item.documentId}`} className="block">
                   <div className="mb-4 overflow-hidden rounded-2xl">
-                    <img
+                    <Image
                       src={getPreviewImage()}
                       alt={item.Titulo}
+                      width={600}
+                      height={400}
                       className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
                     />
                   </div>
                   <h2 className="text-xl md:text-2xl font-semibold mb-3 group-hover:text-[#5e1415] transition-colors" style={{ fontFamily: 'Barlow, sans-serif' }}>
@@ -138,20 +84,20 @@ export default function NewsSection() {
                   <p className="text-gray-600 text-sm md:text-base line-clamp-3">
                     {getExcerpt(item.parrafo)}
                   </p>
-                </a>
+                </Link>
               </article>
             )
           })}
         </div>
 
         <div className="text-center mt-12">
-          <a
+          <Link
             href="/noticias"
             className="inline-block bg-[#ebe4d3] text-[#625352] px-8 py-3 rounded-full font-semibold uppercase tracking-wider hover:bg-[#625352] hover:text-[#ebe4d3] transition-all duration-300"
             style={{ fontFamily: 'Oswald, sans-serif', fontSize: '16px', letterSpacing: '3px' }}
           >
             Ver más
-          </a>
+          </Link>
         </div>
       </div>
       
