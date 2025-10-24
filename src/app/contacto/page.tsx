@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import PageBanner from '@/components/PageBanner'
 
 export default function ContactoPage() {
-  const [isVisible, setIsVisible] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -11,11 +11,6 @@ export default function ContactoPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null)
-
-  useEffect(() => {
-    // Trigger animation when component mounts
-    setTimeout(() => setIsVisible(true), 100)
-  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -63,49 +58,14 @@ export default function ContactoPage() {
 
   return (
     <>
-      {/* Banner Section */}
-      <section
-        className="relative min-h-[60vh] flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url(/images/oficina-asociacion.jpg)',
-          backgroundSize: '100%',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center 30%',
-        }}
-      >
-        {/* Dark overlay for dramatic effect */}
-        <div className="absolute inset-0 bg-black bg-opacity-25"></div>
-        
-        {/* Content with animation */}
-        <div 
-          className={`relative z-10 text-center transition-all duration-1000 ease-out ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}
-        >
-          {/* Leyenda superior */}
-          <p 
-            className="text-sm md:text-base font-semibold text-white mb-4 uppercase tracking-wider"
-            style={{ 
-              fontFamily: 'Barlow, sans-serif',
-              textShadow: '2px 2px 8px rgba(0,0,0,0.8)',
-              letterSpacing: '3px'
-            }}
-          >
-            Estamos cerca, queremos escucharte
-          </p>
-
-          {/* Título principal */}
-          <h1 
-            className="text-6xl md:text-7xl font-bold text-white"
-            style={{ 
-              fontFamily: 'Lora, Georgia, serif',
-              textShadow: '3px 3px 10px rgba(0,0,0,0.8)'
-            }}
-          >
-            Contactános
-          </h1>
-        </div>
-      </section>
+      <PageBanner 
+        title="Contactános"
+        subtitle="Estamos cerca, queremos escucharte"
+        backgroundImage="/images/oficina-asociacion.jpg"
+        desktopPosition="center 30%"
+        mobilePosition="center 35%"
+        overlay={0.2}
+      />
 
       {/* Intro Text Section */}
       <section className="py-16 md:py-20 bg-[#faf8f3]">

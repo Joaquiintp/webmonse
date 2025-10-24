@@ -76,8 +76,14 @@ export default function ServiciosPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Servicio 1 - LibeRed */}
             <a href="/libered" className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer block">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#5e1415] mb-4 mx-auto text-3xl">
-                💳
+              <div className="flex items-center justify-center mb-4 mx-auto">
+                <Image
+                  src="/images/redliber.svg"
+                  alt="Red LibeRed"
+                  width={200}
+                  height={60}
+                  className="max-w-full h-auto"
+                />
               </div>
               <p 
                 className="text-center"

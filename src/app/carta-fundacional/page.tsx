@@ -1,47 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import PageBanner from '@/components/PageBanner'
 
 export default function CartaFundacionalPage() {
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    // Trigger animation when component mounts
-    setTimeout(() => setIsVisible(true), 100)
-  }, [])
-
   return (
     <>
-      {/* Banner Section */}
-      <section
-        className="relative min-h-[45vh] flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url(/images/fuente-patio-menor-monserrat.jpg)',
-          backgroundSize: '100%',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center 30%',
-        }}
-      >
-        {/* Dark overlay for dramatic effect */}
-        <div className="absolute inset-0 bg-black bg-opacity-25"></div>
-        
-        {/* Title with animation */}
-        <div 
-          className={`relative z-10 text-center transition-all duration-1000 ease-out ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}
-        >
-          <h1 
-            className="text-6xl md:text-7xl font-bold text-white"
-            style={{ 
-              fontFamily: 'Lora, Georgia, serif',
-              textShadow: '3px 3px 10px rgba(0,0,0,0.8)'
-            }}
-          >
-            Carta Fundacional
-          </h1>
-        </div>
-      </section>
+      <PageBanner 
+        title="Carta Fundacional"
+        backgroundImage="/images/fuente-patio-menor-monserrat.jpg"
+        desktopPosition="center 30%"
+        mobilePosition="center 25%"
+        overlay={0.2}
+      />
 
       {/* Content Section */}
       <section className="py-20 md:py-32 bg-white">

@@ -180,7 +180,7 @@ export default function LibeRedPage() {
           
           <section id="tarjeta" className="py-12 md:py-20 px-4 bg-white">
             <div className="container mx-auto max-w-7xl">
-              <div className="text-center mb-12 md:mb-16">
+              <div className="text-center mb-8 md:mb-12">
                 <h2 className="text-3xl md:text-5xl font-bold text-[#2c3e50] mb-4">
                   Tarjeta de Beneficios Monserratenses
                 </h2>
@@ -189,9 +189,24 @@ export default function LibeRedPage() {
                 </p>
               </div>
 
+              {/* Tarjeta SOLO en mobile - justo después del título */}
+              <div className="md:hidden mb-8 max-w-lg mx-auto">
+                <div 
+                  className="relative aspect-[1.586/1] rounded-2xl overflow-hidden shadow-2xl"
+                >
+                  <Image
+                    src="/images/Frente.png"
+                    alt="Tarjeta LibeRed - Frente"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              </div>
+
               <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-                {/* Contenido - Ahora primero en TODOS los tamaños */}
-                <div className="order-1">
+                {/* Contenido */}
+                <div className="order-1 md:order-1">
                   <h3 className="text-2xl md:text-3xl font-bold text-[#2c3e50] mb-4">
                     Beneficios que nos unen
                   </h3>
@@ -229,8 +244,8 @@ export default function LibeRedPage() {
                   </div>
                 </div>
 
-                {/* Tarjeta - Segunda posición */}
-                <div className="relative animate-[fadeInLeft_1s_ease-out] order-2">
+                {/* Tarjeta con efecto 3D - SOLO desktop */}
+                <div className="hidden md:block relative animate-[fadeInLeft_1s_ease-out] order-2">
                   <div 
                     className="relative aspect-[1.586/1] max-w-lg mx-auto perspective-1000"
                     onMouseMove={(e) => {
@@ -365,14 +380,14 @@ export default function LibeRedPage() {
                   <div className="space-y-4">
                     <div>
                       <p className="font-semibold text-[#2c3e50]">Email:</p>
-                      <a href="mailto:info@monserratenses.org.ar" className="text-[#8B1538] hover:underline">
-                        info@monserratenses.org.ar
+                      <a href="mailto:asociacion@monserratenses.org.ar" className="text-[#8B1538] hover:underline">
+                        asociacion@monserratenses.org.ar
                       </a>
                     </div>
                     <div>
                       <p className="font-semibold text-[#2c3e50]">Teléfono:</p>
-                      <a href="tel:+543511234567" className="text-[#8B1538] hover:underline">
-                        (0351) 123-4567
+                      <a href="tel:+5493516367773" className="text-[#8B1538] hover:underline">
+                        +54 9 3516 36-7773
                       </a>
                     </div>
                   </div>

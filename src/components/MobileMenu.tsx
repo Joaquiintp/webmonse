@@ -8,13 +8,15 @@ export default function MobileMenu() {
 
   const menuItems = [
     { href: '/', label: 'Inicio' },
-    { href: '/carta-abierta-a-los-egresados', label: 'Carta Abierta a los Egresados' },
-    { href: '/carta-fundacional', label: 'Carta Fundacional' },
-    { href: '/comision-directiva', label: 'Comisión Directiva' },
+    { href: '/servicios', label: 'Servicios' },
     { href: '/contacto', label: 'Contacto' },
     { href: '/mision-vision-valores', label: 'Misión, visión, valores' },
+    { href: '/carta-abierta-a-los-egresados', label: 'Carta Abierta a los Egresados' },
+    { href: '/carta-fundacional', label: 'Carta Fundacional' },
+    { href: '/monserratenses-por-el-mundo', label: 'Monserratenses por el Mundo' },
     { href: '/noticias', label: 'Noticias' },
-    { href: '/youtube', label: 'YouTube' },
+    { href: '/comision-directiva', label: 'Comisión Directiva' },
+    { href: '/libered', label: 'Tarjeta de Beneficios', icon: '🎴' },
   ]
 
   return (
@@ -65,6 +67,7 @@ export default function MobileMenu() {
                     className="block text-white text-sm py-3 hover:text-gray-300 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
+                    {item.icon && <span className="mr-2">{item.icon}</span>}
                     {item.label}
                   </Link>
                 </li>

@@ -7,7 +7,21 @@ import { useState } from 'react'
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const menuItems = [
+  // Menu items para MOBILE (Red LibeR al final)
+  const mobileMenuItems = [
+    { href: '/', label: 'Inicio' },
+    { href: '/comision-directiva', label: 'Comisión Directiva' },
+    { href: '/contacto', label: 'Contacto' },
+    { href: '/mision-vision-valores', label: 'Misión, visión, valores' },
+    { href: '/monserratenses-por-el-mundo', label: 'Monserratenses por el mundo' },
+    { href: '/noticias', label: 'Noticias' },
+    { href: '/servicios', label: 'Servicios' },
+    { href: '/tienda', label: 'Tienda del Duende' },
+    { href: '/libered#tarjeta', label: 'Red LibeR Beneficios' },
+  ]
+
+  // Menu items para DESKTOP (Servicios y Comisión intercambiados, sin emoji)
+  const desktopMenuItems = [
     { href: '/', label: 'Inicio' },
     { href: '/servicios', label: 'Servicios' },
     { href: '/contacto', label: 'Contacto' },
@@ -15,6 +29,8 @@ export default function Header() {
     { href: '/monserratenses-por-el-mundo', label: 'Monserratenses por el mundo' },
     { href: '/noticias', label: 'Noticias' },
     { href: '/comision-directiva', label: 'Comisión Directiva' },
+    { href: '/carta-abierta-a-los-egresados', label: 'Carta Abierta a los Egresados' },
+    { href: '/tienda', label: 'Tienda del Duende' },
   ]
 
   return (
@@ -56,8 +72,8 @@ export default function Header() {
             {/* Desktop Menu */}
             <div className="et_pb_column hidden lg:block" style={{ width: '53%' }}>
               <nav className="et_pb_menu text-right">
-                <ul className="et-menu nav inline-flex justify-end items-center gap-x-6" style={{ maxWidth: '100%', flexWrap: 'wrap' }}>
-                  {menuItems.map((item) => (
+                <ul className="et-menu nav inline-flex justify-end items-center gap-x-3" style={{ maxWidth: '100%', flexWrap: 'wrap' }}>
+                  {desktopMenuItems.map((item) => (
                     <li key={item.href} className="inline-block">
                       <Link 
                         href={item.href}
@@ -96,10 +112,10 @@ export default function Header() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg">
-          <nav className="container mx-auto px-4 py-4">
+        <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg absolute w-full left-0 top-full">
+          <nav className="px-4 py-4">
             <ul className="space-y-2">
-              {menuItems.map((item) => (
+              {mobileMenuItems.map((item) => (
                 <li key={item.href}>
                   <Link 
                     href={item.href}
@@ -107,32 +123,28 @@ export default function Header() {
                     className="block py-3 px-4 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                     style={{ 
                       fontFamily: 'Barlow, Helvetica, Arial, sans-serif',
-                      fontSize: '16px',
+                      fontSize: '15px',
                       textTransform: 'uppercase'
                     }}
                   >
-                    {item.label}
+                    {item.href === '/libered#tarjeta' ? (
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src="/images/redliber.svg"
+                          alt="Red LibeR"
+                          width={100}
+                          height={35}
+                          className="w-auto h-auto object-contain"
+                          style={{ maxHeight: '35px' }}
+                        />
+                        <span>Tarjeta de beneficios</span>
+                      </div>
+                    ) : (
+                      item.label
+                    )}
                   </Link>
                 </li>
               ))}
-              {/* LibeRed en menú móvil */}
-              <li className="border-t border-gray-200 pt-2 mt-2">
-                <Link 
-                  href="/libered#tarjeta"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 py-3 px-4 text-[#8B1538] hover:bg-red-50 rounded-lg transition-colors font-semibold"
-                >
-                  <Image
-                    src="/images/redliber.svg"
-                    alt="LibeRed"
-                    width={80}
-                    height={30}
-                    className="w-auto h-auto object-contain"
-                    style={{ maxHeight: '25px' }}
-                  />
-                  <span>Tarjeta de Beneficios</span>
-                </Link>
-              </li>
             </ul>
           </nav>
         </div>

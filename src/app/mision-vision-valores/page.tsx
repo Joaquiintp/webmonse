@@ -1,61 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import PageBanner from '@/components/PageBanner'
 
 export default function MisionVisionValoresPage() {
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    // Trigger animation when component mounts
-    setTimeout(() => setIsVisible(true), 100)
-  }, [])
-
   return (
     <>
-      {/* Banner Section */}
-      <section
-        className="relative min-h-[60vh] flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url(/images/patio-monserrat.jpg)',
-          backgroundSize: '100%',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center center',
-        }}
-      >
-        {/* Dark overlay for dramatic effect */}
-        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-        
-        {/* Content with animation */}
-        <div 
-          className={`relative z-10 text-center transition-all duration-1000 ease-out ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}
-        >
-          {/* Leyenda superior */}
-          <p 
-            className="text-sm md:text-base font-semibold text-white mb-4 uppercase tracking-wider"
-            style={{ 
-              fontFamily: 'Barlow, sans-serif',
-              textShadow: '2px 2px 8px rgba(0,0,0,0.8)',
-              letterSpacing: '3px'
-            }}
-          >
-            Quiénes somos
-          </p>
-
-          {/* Título principal */}
-          <h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white px-6"
-            style={{ 
-              fontFamily: 'Lora, Georgia, serif',
-              textShadow: '3px 3px 12px rgba(0,0,0,0.8)',
-              lineHeight: '1.2'
-            }}
-          >
-            Misión, Visión y Valores
-          </h1>
-        </div>
-      </section>
+      <PageBanner 
+        title="Misión, Visión y Valores"
+        subtitle="Quiénes somos"
+        backgroundImage="/images/patio-monserrat.jpg"
+        desktopPosition="center center"
+        mobilePosition="center 30%"
+        overlay={0.2}
+      />
 
       {/* Content Section */}
       <section className="py-16 px-6" style={{ backgroundColor: '#faf8f3' }}>

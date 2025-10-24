@@ -1,58 +1,97 @@
-// Función para obtener noticias desde Strapi
-export async function getNoticias(limit?: number) {
-  const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-  const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
+import { fetchFromStrapi, getStrapiImageUrl } from './strapi-config'
 
-  try {
-    const url = limit 
-      ? `${strapiUrl}/api/noticias?populate=*&sort=publishedAt:desc&pagination[limit]=${limit}`
-      : `${strapiUrl}/api/noticias?populate=*&sort=publishedAt:desc`;
-      
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      next: { revalidate: 60 }, // Revalidar cada 60 segundos
-    });
+export interface Noticia {
+  id: number
+  documentId: string
+  titulo: string
+  slug: string | null
+  parrafo1: string
+  parrafo2?: string | null
+  url?: string | null
+  foto?: {
+    url: string
+    alternativeText?: string
+  }
+  fotos?: Array<{
+    url: string
+    alternativeText?: string
+  }>
+  publishedAt: string
+  createdAt: string
+  updatedAt: string
+}
 
-    if (!response.ok) {
-      console.error('Error fetching noticias:', response.statusText);
-      return [];
+interface StrapiResponse<T> {
+  data: T[]
+  meta: {
+    pagination: {
+      page: number
+      pageSize: number
+      pageCount: number
+      total: number
     }
-
-    const data = await response.json();
-    return data.data || [];
-  } catch (error) {
-    console.error('Error loading noticias from Strapi:', error);
-    return [];
   }
 }
 
-// Función para obtener una noticia por slug
-export async function getNoticiaBySlug(slug: string) {
-  const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-  const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
-
+export async function getNoticias(limit?: number): Promise<Noticia[]> {
   try {
-    const response = await fetch(
-      `${strapiUrl}/api/noticias?filters[Slug][$eq]=${slug}&populate=*`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        next: { revalidate: 3600 },
-      }
-    );
+    const endpoint = limit 
+      ? `noticias?populate=*&sort=publishedAt:desc&pagination[limit]=${limit}`
+      : `noticias?populate=*&sort=publishedAt:desc`
+    
+    const response = await fetchFromStrapi<StrapiResponse<Noticia>>(endpoint, {
+    })
 
-    if (!response.ok) {
-      console.error('Error fetching noticia:', response.statusText);
-      return null;
+    if (!response || !response.data) {
+      console.error('No se pudieron cargar las noticias')
+      return []
     }
 
-    const data = await response.json();
-    return data.data?.[0] || null;
+    console.log(`Noticias cargadas desde Strapi: ${response.data.length}`)
+    return response.data
   } catch (error) {
-    console.error('Error loading noticia from Strapi:', error);
-    return null;
+    console.error('Error loading noticias from Strapi:', error)
+    return []
   }
+}
+
+export async function getNoticiaBySlug(slug: string): Promise<Noticia | null> {
+  try {
+    let response = await fetchFromStrapi<StrapiResponse<Noticia>>(
+      `noticias?filters[slug][$eq]=${slug}&populate=*`,
+    )
+
+    if (response && response.data && response.data.length > 0) {
+      return response.data[0]
+    }
+
+    response = await fetchFromStrapi<StrapiResponse<Noticia>>(
+      `noticias?filters[documentId][$eq]=${slug}&populate=*`,
+    )
+
+    if (response && response.data && response.data.length > 0) {
+      return response.data[0]
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error loading noticia from Strapi:', error)
+    return null
+  }
+}
+
+export function getNoticiaImageUrl(noticia: Noticia): string {
+  if (noticia.fotos && noticia.fotos.length > 0) {
+    return getStrapiImageUrl(noticia.fotos[0].url)
+  }
+  if (noticia.foto?.url) {
+    return getStrapiImageUrl(noticia.foto.url)
+  }
+  return '/images/aniversario-335.jpg'
+}
+
+export function getNoticiaExcerpt(parrafo: string, maxLength: number = 150): string {
+  if (!parrafo) return ''
+  const cleanText = parrafo.replace(/[#*_~`]/g, '').substring(0, maxLength)
+  return cleanText + (parrafo.length > maxLength ? '...' : '')
 }

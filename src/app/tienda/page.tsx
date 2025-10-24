@@ -1,11 +1,17 @@
-import TiendaProductSection from '@/components/TiendaProductSection';
-import CartDrawer from '@/components/CartDrawer';
 import Image from 'next/image';
 import { getProducts } from '@/lib/strapi-products';
+import ProductImageCarousel from '@/components/ProductImageCarousel';
 
 export default async function TiendaPage() {
   // Obtener productos desde Strapi
   const productsFromStrapi = await getProducts();
+  
+  // Separar vinos y productos por categoría
+  const vinos = productsFromStrapi.filter(p => p.category === 'wine');
+  const productos = productsFromStrapi.filter(p => p.category === 'model');
+  
+  // Número de WhatsApp de la asociación
+  const whatsappNumber = '5493516367773';
   
   return (
     <>
@@ -82,10 +88,87 @@ export default async function TiendaPage() {
       </section>
 
       {/* Products Section */}
-      <TiendaProductSection products={productsFromStrapi} />
+      <section className="py-16 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Vinos Section */}
+          {vinos && vinos.length > 0 && (
+            <div id="vinos" className="mb-16">
+              <h2 className="text-4xl font-bold text-center mb-12 text-[#5e1415]" style={{ fontFamily: 'Lora, Georgia, serif' }}>
+                Colección de Vinos
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {vinos.map((vino) => (
+                  <div key={vino.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <ProductImageCarousel images={vino.images || []} alt={vino.name} />
+                    <div className="p-6">
+                      <h3 className="text-2xl font-bold mb-2 text-[#5e1415]" style={{ fontFamily: 'Lora, Georgia, serif' }}>
+                        {vino.name}
+                      </h3>
+                      {vino.description && (
+                        <p className="text-gray-700 mb-4 line-clamp-3">
+                          {vino.description}
+                        </p>
+                      )}
+                      {vino.price && (
+                        <p className="text-2xl font-bold text-[#5e1415] mb-4">
+                          ${vino.price}
+                        </p>
+                      )}
+                      <a
+                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hola! Me interesa consultar sobre el vino ${vino.name}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-[#25D366] text-white text-center py-3 rounded-lg font-semibold hover:bg-[#128C7E] transition-colors"
+                      >
+                        Consultar por WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-      {/* Cart Drawer */}
-      <CartDrawer />
+          {/* Productos Section */}
+          {productos && productos.length > 0 && (
+            <div id="productos">
+              <h2 className="text-4xl font-bold text-center mb-12 text-[#5e1415]" style={{ fontFamily: 'Lora, Georgia, serif' }}>
+                Productos
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {productos.map((producto) => (
+                  <div key={producto.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <ProductImageCarousel images={producto.images || []} alt={producto.name} />
+                    <div className="p-6">
+                      <h3 className="text-2xl font-bold mb-2 text-[#5e1415]" style={{ fontFamily: 'Lora, Georgia, serif' }}>
+                        {producto.name}
+                      </h3>
+                      {producto.description && (
+                        <p className="text-gray-700 mb-4 line-clamp-3">
+                          {producto.description}
+                        </p>
+                      )}
+                      {producto.price && (
+                        <p className="text-2xl font-bold text-[#5e1415] mb-4">
+                          ${producto.price}
+                        </p>
+                      )}
+                      <a
+                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hola! Me interesa consultar sobre ${producto.name}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-[#25D366] text-white text-center py-3 rounded-lg font-semibold hover:bg-[#128C7E] transition-colors"
+                      >
+                        Consultar por WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
     </>
   );
 }

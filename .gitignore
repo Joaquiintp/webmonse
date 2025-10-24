@@ -1,5 +1,5 @@
 # Dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 
@@ -9,11 +9,11 @@
 # Next.js
 /.next/
 /out/
+next-env.d.ts
 
-# Production builds
+# Production
 /build
-/deploy-hostinger/
-*.zip
+/dist
 
 # Misc
 .DS_Store
@@ -25,21 +25,36 @@ yarn-debug.log*
 yarn-error.log*
 
 # Local env files
+.env
 .env*.local
-.env.production
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Vercel
 .vercel
 
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
+# Strapi
+webmonse-strapi/.tmp/
+webmonse-strapi/.cache/
+webmonse-strapi/build/
+webmonse-strapi/.strapi-updater.json
+webmonse-strapi/.env
+webmonse-strapi/data/
+webmonse-strapi/database/*.db
 
-# Deployment scripts
-deploy.sh
-prepare-hostinger.sh
-.htaccess
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Documentation temporal
-GUIA-DEPLOYMENT.md
-CORRECCIONES-MOBILE.md
+# Logs
+*.log
+strapi.log
+nextjs.log
+
+# OS
+Thumbs.db
