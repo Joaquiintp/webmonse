@@ -1,15 +1,23 @@
-import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
+// Permitir rutas dinámicas sin pre-generar
+export const dynamic = 'force-dynamic'
+export const dynamicParams = true
 
 interface Noticia {
   id: number
   documentId: string
   Titulo: string
+  titulo?: string
   Slug: string | null
+  slug?: string
   parrafo: string
+  parrafo1?: string
   Parrafo2?: string
   URL?: string
+  url?: string
   foto: {
     url: string
     alternativeText?: string
@@ -21,71 +29,58 @@ interface Noticia {
   publishedAt: string
 }
 
-// Pre-generar páginas estáticas para todas las noticias
-export async function generateStaticParams() {
-  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
-  const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-  
-  try {
-    const response = await fetch(
-      `${STRAPI_URL}/api/noticias?populate=*`,
-      {
-        headers: {
-          'Authorization': `Bearer ${STRAPI_TOKEN}`
-        },
-        next: { revalidate: 3600 }
-      }
-    )
-    
-    if (!response.ok) return []
-    
-    const data = await response.json()
-    
-    return data.data.map((noticia: Noticia) => ({
-      slug: noticia.documentId,
-    }))
-  } catch (error) {
-    console.error('Error fetching noticias for static generation:', error)
-    return []
-  }
-}
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://monserratenses.org.ar'
 
-// Función para obtener noticia por slug
 async function getNoticia(slug: string): Promise<Noticia | null> {
-  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
-  const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-  
   try {
+    console.log(`🔍 Fetching noticia with slug: ${slug}`)
     const response = await fetch(
-      `${STRAPI_URL}/api/noticias?populate=*`,
-      {
+      `${STRAPI_URL}/api/noticias?populate=*&filters[slug][$eq]=${slug}`,
+      { 
+        next: { revalidate: 3600 }, // Revalidar cada hora
         headers: {
-          'Authorization': `Bearer ${STRAPI_TOKEN}`
-        },
-        next: { revalidate: 3600 }
+          'Content-Type': 'application/json',
+        }
       }
     )
     
-    if (!response.ok) return null
+    if (!response.ok) {
+      console.error(`❌ Error fetching noticia: ${response.status}`)
+      return null
+    }
     
     const data = await response.json()
-    const noticia = data.data.find((n: Noticia) => n.documentId === slug || n.Slug === slug)
+    const noticia = data.data?.[0]
     
-    return noticia || null
+    if (!noticia) {
+      console.log(`⚠️ Noticia not found for slug: ${slug}`)
+      return null
+    }
+    
+    console.log(`✅ Noticia found: ${noticia.titulo || noticia.Titulo}`)
+    return noticia
   } catch (error) {
-    console.error('Error fetching noticia:', error)
+    console.error('❌ Error fetching noticia:', error)
     return null
   }
 }
 
-export default async function NoticiaDetailPage({ params }: { params: { slug: string } }) {
+export default async function NoticiaDetailPage({
+  params
+}: {
+  params: { slug: string }
+}) {
   const noticia = await getNoticia(params.slug)
-  
+
   if (!noticia) {
     notFound()
   }
+
+  const titulo = noticia.titulo || noticia.Titulo
+  const parrafo1 = noticia.parrafo1 || noticia.parrafo
+  const parrafo2 = noticia.Parrafo2
+  const videoUrl = noticia.url || noticia.URL
   
-  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
   const imageUrl = noticia.foto?.url 
     ? `${STRAPI_URL}${noticia.foto.url}`
     : '/images/aniversario-335.jpg'
@@ -100,9 +95,10 @@ export default async function NoticiaDetailPage({ params }: { params: { slug: st
   }
 
   // Convertir URL de YouTube a embed
-  const getYouTubeEmbedUrl = (url: string) => {
+  const getYouTubeEmbedUrl = (url: string | undefined) => {
     if (!url) return null
     
+    // Diferentes formatos de URL de YouTube
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
     const match = url.match(regExp)
     
@@ -112,110 +108,192 @@ export default async function NoticiaDetailPage({ params }: { params: { slug: st
     
     return null
   }
-
-  const videoEmbedUrl = noticia.URL ? getYouTubeEmbedUrl(noticia.URL) : null
+  
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(videoUrl)
 
   return (
-    <article className="min-h-screen">
-      {/* Hero Image */}
-      <div className="relative h-[60vh] w-full overflow-hidden">
+    <>
+      {/* Banner with image */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <Image
           src={imageUrl}
-          alt={noticia.foto?.alternativeText || noticia.Titulo}
+          alt={titulo}
           fill
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-transparent"></div>
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         
-        {/* Título superpuesto */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
-          <div className="container mx-auto max-w-4xl">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
-              {noticia.Titulo}
-            </h1>
-            <div className="flex items-center gap-4 text-white/90">
-              <time className="text-sm md:text-base">
-                {formatDate(noticia.publishedAt)}
-              </time>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Contenido */}
-      <div className="container mx-auto max-w-4xl px-4 py-12 md:py-16">
-        {/* Botón volver */}
-        <Link 
-          href="/noticias" 
-          className="inline-flex items-center gap-2 text-[#5e1415] hover:text-[#7a1a1c] mb-8 transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Volver a Noticias
-        </Link>
-
-        {/* Párrafo principal */}
-        <div className="prose prose-lg max-w-none mb-12">
-          <p className="text-xl leading-relaxed text-gray-700 whitespace-pre-line">
-            {noticia.parrafo}
+        <div className="relative z-10 text-center px-4 max-w-4xl">
+          <h1 
+            className="text-4xl md:text-6xl font-bold text-white mb-4"
+            style={{ 
+              fontFamily: 'Lora, Georgia, serif',
+              textShadow: '3px 3px 10px rgba(0,0,0,0.8)'
+            }}
+          >
+            {titulo}
+          </h1>
+          <p className="text-white text-lg" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.8)' }}>
+            {formatDate(noticia.publishedAt)}
           </p>
         </div>
+      </section>
 
-        {/* Video de YouTube si existe */}
-        {videoEmbedUrl && (
-          <div className="my-12">
-            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-              <iframe
-                src={videoEmbedUrl}
-                title={noticia.Titulo}
-                className="absolute top-0 left-0 w-full h-full rounded-lg shadow-xl"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          </div>
-        )}
+      {/* Content Section */}
+      <section className="py-16 md:py-24 bg-[#faf8f3]">
+        <div className="container mx-auto px-4 max-w-4xl">
+          {/* Back button */}
+          <Link 
+            href="/noticias" 
+            className="inline-flex items-center text-[#5e1415] hover:text-[#7a1a1c] mb-8 transition-colors"
+          >
+            <svg 
+              className="w-5 h-5 mr-2" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M15 19l-7-7 7-7" 
+              />
+            </svg>
+            Volver a Noticias
+          </Link>
 
-        {/* Galería de fotos adicionales */}
-        {noticia.fotos && noticia.fotos.length > 0 && (
-          <div className="my-12">
-            <h2 className="text-3xl font-bold text-[#5e1415] mb-6">Galería</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              {noticia.fotos.map((foto, index) => (
-                <div key={index} className="relative h-80 rounded-lg overflow-hidden shadow-lg">
-                  <Image
-                    src={`${STRAPI_URL}${foto.url}`}
-                    alt={foto.alternativeText || `Imagen ${index + 1}`}
-                    fill
-                    className="object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
+          {/* Article content */}
+          <article className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+            {/* Si NO hay Parrafo2: Video arriba (si hay URL) o Imagen arriba (si NO hay fotos galería ni URL) */}
+            {!parrafo2 && (
+              <div className="mb-8">
+                {videoUrl && getYouTubeEmbedUrl(videoUrl) ? (
+                  // Video de YouTube (la foto será solo para portada)
+                  <div className="relative w-full rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      src={getYouTubeEmbedUrl(videoUrl)!}
+                      className="absolute top-0 left-0 w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                ) : (
+                  // Imagen principal solo si NO hay fotos en galería
+                  (!noticia.fotos || noticia.fotos.length === 0) && noticia.foto && (
+                    <div className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden">
+                      <Image
+                        src={imageUrl}
+                        alt={titulo}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+
+            {/* Primer párrafo */}
+            <div 
+              className="prose prose-lg max-w-none mb-8"
+              style={{ 
+                fontFamily: 'Lora, Georgia, serif',
+                lineHeight: '1.8',
+                color: '#333'
+              }}
+            >
+              {parrafo1.split('\n').map((paragraph, index) => (
+                paragraph.trim() && (
+                  <p key={index} className="mb-6">
+                    {paragraph}
+                  </p>
+                )
               ))}
             </div>
-          </div>
-        )}
 
-        {/* Párrafo 2 si existe */}
-        {noticia.Parrafo2 && (
-          <div className="prose prose-lg max-w-none mt-12">
-            <p className="text-xl leading-relaxed text-gray-700 whitespace-pre-line">
-              {noticia.Parrafo2}
-            </p>
-          </div>
-        )}
+            {/* Si hay Parrafo2: Video en el medio (si hay URL) o Imagen en el medio (si NO hay fotos galería ni URL) */}
+            {parrafo2 && (
+              <>
+                <div className="my-10">
+                  {videoUrl && getYouTubeEmbedUrl(videoUrl) ? (
+                    // Video de YouTube (la foto será solo para portada)
+                    <div className="relative w-full rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                      <iframe
+                        src={getYouTubeEmbedUrl(videoUrl)!}
+                        className="absolute top-0 left-0 w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  ) : (
+                    // Imagen principal solo si NO hay fotos en galería
+                    (!noticia.fotos || noticia.fotos.length === 0) && noticia.foto && (
+                      <div className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden">
+                        <Image
+                          src={imageUrl}
+                          alt={titulo}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
 
-        {/* Navegación */}
-        <div className="mt-16 pt-8 border-t border-gray-200">
-          <Link 
-            href="/noticias"
-            className="inline-block bg-[#5e1415] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#7a1a1c] transition-all shadow-lg"
-          >
-            Ver todas las noticias
-          </Link>
+                {/* Segundo párrafo */}
+                <div 
+                  className="prose prose-lg max-w-none"
+                  style={{ 
+                    fontFamily: 'Lora, Georgia, serif',
+                    lineHeight: '1.8',
+                    color: '#333'
+                  }}
+                >
+                  {parrafo2.split('\n').map((paragraph: string, index: number) => (
+                    paragraph.trim() && (
+                      <p key={index} className="mb-6">
+                        {paragraph}
+                      </p>
+                    )
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Galería de fotos adicionales (fotos) */}
+            {noticia.fotos && noticia.fotos.length > 0 && (
+              <div className="mt-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {noticia.fotos.map((image: any, index: number) => (
+                    <div key={index} className="relative h-[300px] md:h-[400px] rounded-lg overflow-hidden">
+                      <Image
+                        src={`${STRAPI_URL}${image.url}`}
+                        alt={image.alternativeText || `Imagen ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </article>
+
+          {/* Back button bottom */}
+          <div className="mt-12 text-center">
+            <Link 
+              href="/noticias" 
+              className="inline-block bg-[#5e1415] text-white px-8 py-3 rounded-full font-semibold uppercase tracking-wider hover:bg-[#7a1a1c] transition-colors"
+            >
+              ← Volver a Noticias
+            </Link>
+          </div>
         </div>
-      </div>
-    </article>
+      </section>
+    </>
   )
 }

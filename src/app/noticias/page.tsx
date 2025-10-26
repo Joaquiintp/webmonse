@@ -60,7 +60,7 @@ export default async function NoticiasPage() {
             <p className="text-center text-gray-600">No hay noticias disponibles</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {news.map((item: Noticia) => {
+              {news.map((item) => {
                 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL
                 
                 // Determinar qué imagen mostrar: primera de fotos o foto principal
@@ -86,24 +86,24 @@ export default async function NoticiasPage() {
                 return (
                   <Link 
                     key={item.id} 
-                    href={`/noticias/${item.Slug || item.documentId}`}
+                    href={`/noticias/${item.slug || item.documentId}`}
                     className="group"
                   >
                     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                       <div className="relative h-48 overflow-hidden">
                         <Image
                           src={imageUrl}
-                          alt={item.Titulo}
+                          alt={item.titulo}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
                       <div className="p-6">
                         <h3 className="text-xl font-bold mb-3 text-[#5e1415] group-hover:text-[#7a1a1c] transition-colors">
-                          {item.Titulo}
+                          {item.titulo}
                         </h3>
                         <p className="text-gray-600 mb-4" style={{ fontFamily: 'Lora, Georgia, serif' }}>
-                          {getExcerpt(item.parrafo)}
+                          {getExcerpt((item as any).parrafo ?? (item as any).Parrafo2 ?? "")}
                         </p>
                         <span className="text-[#5e1415] font-semibold uppercase text-sm tracking-wider">
                           Leer más →
