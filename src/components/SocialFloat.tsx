@@ -1,26 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export default function SocialFloat() {
   const [isOpen, setIsOpen] = useState(false)
-  const [showWelcome, setShowWelcome] = useState(false)
-
-  useEffect(() => {
-    // Mostrar viñeta de bienvenida solo si es la primera visita
-    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome')
-    if (!hasSeenWelcome) {
-      setTimeout(() => {
-        setShowWelcome(true)
-        sessionStorage.setItem('hasSeenWelcome', 'true')
-      }, 1500) // Aparece después de 1.5 segundos
-
-      // Ocultar después de 10 segundos
-      setTimeout(() => {
-        setShowWelcome(false)
-      }, 11500)
-    }
-  }, [])
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
@@ -29,32 +12,6 @@ export default function SocialFloat() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <div className="flex flex-col items-center">
-        {/* Viñeta de bienvenida */}
-        {showWelcome && (
-          <div className="absolute bottom-20 right-0 mb-4 mr-2 bg-white rounded-2xl shadow-2xl p-4 md:p-6 max-w-[280px] md:max-w-xs animate-[fadeInUp_0.5s_ease-out] border-2 border-[#5e1415]">
-            <button
-              onClick={() => setShowWelcome(false)}
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Cerrar"
-            >
-              <svg className="w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-            <div className="flex items-start gap-3">
-              <div className="text-3xl">👋</div>
-              <div>
-                <h3 className="font-bold text-[#5e1415] mb-2">¡Bienvenido!</h3>
-                <p className="text-sm text-gray-700 mb-2">
-                  Pulsando aquí puedes direccionarte a todas nuestras redes.
-                </p>
-                <p className="text-sm font-semibold text-[#5e1415]">¡Gracias por tu apoyo!</p>
-              </div>
-            </div>
-            {/* Flecha apuntando al botón */}
-            <div className="absolute -bottom-3 right-8 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-[#5e1415]"></div>
-          </div>
-        )}
         {/* Botones de redes sociales */}
         <div className={`flex flex-col gap-3 mb-3 transition-all duration-300 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
         {/* YouTube */}
