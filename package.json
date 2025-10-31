@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "strapi": "strapi",
+    "strapi:develop": "strapi develop",
+    "strapi:start": "strapi start",
+    "strapi:build": "strapi build"
   },
   "dependencies": {
     "lucide-react": "^0.547.0",
